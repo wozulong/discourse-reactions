@@ -297,7 +297,8 @@ class DiscourseReactions::CustomReactionsController < ApplicationController
   def secure_reaction_users!(reaction_users)
     builder = DB.build("/*where*/")
     UserAction.apply_common_filters(builder, current_user.id, guardian)
-    reaction_users.joins("LEFT JOIN user_actions a ON a.target_post_id = discourse_reactions_reaction_users.post_id")
+    reaction_users.distinct
+      .joins("LEFT JOIN user_actions a ON a.target_post_id = discourse_reactions_reaction_users.post_id")
       .where(builder.to_sql.delete_prefix("/*where*/").delete_prefix("WHERE"))
   end
 
